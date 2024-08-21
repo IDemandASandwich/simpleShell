@@ -52,6 +52,7 @@ char *lsh_read_line(void){
         }
     }
     
+    return line;
 }
 
 #define LSH_TOK_BUFSIZE 64
@@ -66,20 +67,22 @@ char **lsh_split_line(char *line){
         exit(EXIT_FAILURE);
     }
 
-    do{
-        token = strtok(line, LSH_TOK_DELIM);
+    token = strtok(line, LSH_TOK_DELIM);
+    while (token != NULL) {
         tokens[position] = token;
         position++;
 
         if (position >= bufsize) {
             bufsize += LSH_TOK_BUFSIZE;
             tokens = realloc(tokens, bufsize * sizeof(char*));
-            if (!tokens) {
-                fprintf(stderr, "lsh: allocation error\n");
-                exit(EXIT_FAILURE);
-            }
+        if (!tokens) {
+            fprintf(stderr, "lsh: allocation error\n");
+            exit(EXIT_FAILURE);
         }
-    }while(token != NULL);
+    }
+
+    token = strtok(NULL, LSH_TOK_DELIM);
+  }
 
     tokens[position] == NULL;
     return tokens;
